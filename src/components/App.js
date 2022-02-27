@@ -1,27 +1,43 @@
 import Radio  from "./Radio";
 import Boton from './Boton'
-import { useState } from "react";
-import { buildUrlReceta, buildUrlIngrediente, getIngredients, getSteps, prueba} from "./util/StringUtil" 
+import { useEffect, useState } from "react";
+import { buildUrlReceta, buildUrlIngrediente, buildUrlRandomRecepie, getIngredients, getSteps, prueba} from "./util/StringUtil" 
 import { createCardRecepie, createCardIngredients } from "./util/CardUtil"
 
 function App() {
   const [receta, setReceta] = useState('');
   const [busqueda, setBusqueda] = useState('');
   const[resultados, setResultados] = useState('')
+  const [random, setRandom] = useState([]);
 
+  useEffect(() => {
+		// componentDidMount
+		alert('Bienvenido')
+
+	}, []);
+    
+    useEffect( () => { 
+        async function fetchData() {
+            try {
+              var url = buildUrlRandomRecepie();
+              const recepies = await getRecepies(url)
+              createCardRecepie(recepies.recipes[0])
+          //     recepies.recepies.forEach(recepie => {
+          //     createCardRecepie(recepie);
+          // })
+        console.log(url)
+                // const res = await axios.get('/posts'); 
+                // setRandom(res.data);
+            } catch (err) {
+                console.log(err);
+            }
+        }
+        fetchData();
+    }, []);
+    
   const handleInputChange = (ev) => {
     setReceta(ev.target.value)
 }
-
-// const handleClick = () => {
-//   const recetaEnEstado = receta;
-//   if (!recetaEnEstado) return;
-
-//   console.log('entre1')
-//   console.log(busqueda)
-//   prueba(receta, busqueda)
-
-// };
 
 async function handleClick() {
   const search = receta;
@@ -58,12 +74,19 @@ async function handleClick() {
       console.log(err)
     }
   }
-
-
-
+  
+  // async function showRandomRecepie(){
+  //   try {
+  //     var url = buildUrlRandomRecepie();
+  //     console.log(url)
+  //     const response = await fetch(url)
+  // } catch(err) {
+  //   console.log(err)
+  // }
+  // }
 
   return (
-    <div>
+    <div> 
      <h1>Busque una receta</h1>
      <br></br> 
       <br></br>
@@ -81,6 +104,7 @@ async function handleClick() {
       <button onClick={handleClick}>
         Buscar
       </button>
+     
       <div id="resultados"></div>
     </div>
   );
