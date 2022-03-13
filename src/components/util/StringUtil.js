@@ -2,7 +2,7 @@ export function buildUrlReceta(search) {
     const API_KEY = '244f8d85b58a49ab82d06ec82a66dbe3'; // Provided by sppoon
 	const baseUrl = 'https://api.spoonacular.com/recipes/complexSearch';
   
-	return `${baseUrl}?query=${search}&addRecipeInformation=true&fillIngredients=true&apiKey=${API_KEY}`;
+	return `${baseUrl}?query=${search}&addRecipeInformation=true&instructionsRequired=true&fillIngredients=true&apiKey=${API_KEY}`;
 }
 
 export function buildUrlIngrediente(search) {

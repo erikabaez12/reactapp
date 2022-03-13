@@ -3,11 +3,12 @@ import Boton from './Boton'
 import { useState } from "react";
 import { buildUrlReceta, buildUrlIngrediente, getIngredients, getSteps, prueba} from "./util/StringUtil" 
 import { createCardRecepie, createCardIngredients } from "./util/CardUtil"
+import RecipeReviewCard from './Recipies/RecipeReviewCard'
 
 function App() {
   const [receta, setReceta] = useState('');
   const [busqueda, setBusqueda] = useState('');
-  const[resultados, setResultados] = useState('')
+  const [resultados, setResultados] = useState([])
 
   const handleInputChange = (ev) => {
     setReceta(ev.target.value)
@@ -37,9 +38,10 @@ async function handleClick() {
     // results.innerHTML = ""; borraba resultados anterirores //todo ver como borrar en react 
     const recepies = await getRecepies(url);
         if (busqueda=='receta'){
-    recepies.results.forEach(recepie => {
-        createCardRecepie(recepie);
-    })
+           setResultados(recepies.results)
+          /*recepies.results.forEach(recepie => {
+              createCardRecepie(recepie);
+          })*/
     }else if (busqueda=='ingrediente'){
         recepies.forEach(recepie => {
           setResultados(createCardIngredients(recepie))
@@ -81,7 +83,18 @@ async function handleClick() {
       <button onClick={handleClick}>
         Buscar
       </button>
-      <div id="resultados"></div>
+       <div id="resultados">
+                {resultados.map((recipe, index) => (
+                    <li key={index}> 
+                        <RecipeReviewCard title = {recipe.title}
+                          summary = {recipe.summary}
+                          image = {recipe.image}
+                          ingredients = {recipe.missedIngredients}
+                          instructions = {recipe.analyzedInstructions[0].steps}
+                          cuisines = {recipe.cuisines}/>                 
+                    </li>        
+                ))}
+      </div>
     </div>
   );
 }
