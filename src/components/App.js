@@ -1,8 +1,5 @@
-import Radio  from "./Radio";
-import Boton from './Boton'
-import { useState } from "react";
-import { buildUrlReceta, buildUrlIngrediente, getIngredients, getSteps, prueba} from "./util/StringUtil" 
-import { createCardRecepie, createCardIngredients } from "./util/CardUtil"
+import { useEffect, useState } from "react";
+import { buildUrlReceta, buildUrlIngrediente, buildUrlRandomRecepie, buildUrlTipo, getIngredients, getSteps, prueba} from "./util/StringUtil" 
 import RecipeReviewCard from './Recipies/RecipeReviewCard'
 
 function App() {
@@ -10,42 +7,43 @@ function App() {
   const [busqueda, setBusqueda] = useState('');
   const [resultados, setResultados] = useState([])
 
+  useEffect( () => { 
+    async function fetchData() {
+        try {
+          var url = buildUrlRandomRecepie();
+          const recepies = await getRecepies(url)
+          setResultados(recepies.recipes)
+    console.log(url)
+        } catch (err) {
+            console.log(err);
+        }
+    }
+    fetchData();
+}, []);
+
   const handleInputChange = (ev) => {
     setReceta(ev.target.value)
 }
-
-// const handleClick = () => {
-//   const recetaEnEstado = receta;
-//   if (!recetaEnEstado) return;
-
-//   console.log('entre1')
-//   console.log(busqueda)
-//   prueba(receta, busqueda)
-
-// };
 
 async function handleClick() {
   const search = receta;
 
   if(search) {
       if (busqueda=='receta'){
+        console.log('Busqueda por receta')
         var url = buildUrlReceta(search);
-      }else if (busqueda=='ingrediente'){
-        console.log('ingrediente')
-        var url = buildUrlIngrediente(search);
+      }else if (busqueda=='tipo'){
+        console.log('Busqueda por tipo')
+        var url = buildUrlTipo(search);
       }
   }
-    // results.innerHTML = ""; borraba resultados anterirores //todo ver como borrar en react 
-    const recepies = await getRecepies(url);
-        if (busqueda=='receta'){
+
+  const recepies = await getRecepies(url);
+    console.log(url);
+    if (busqueda=='receta'){
            setResultados(recepies.results)
-          /*recepies.results.forEach(recepie => {
-              createCardRecepie(recepie);
-          })*/
-    }else if (busqueda=='ingrediente'){
-        recepies.forEach(recepie => {
-          setResultados(createCardIngredients(recepie))
-    })
+    }else if (busqueda=='tipo'){
+      setResultados(recepies.recipes)
     }
     setReceta('')
   }
@@ -61,9 +59,6 @@ async function handleClick() {
     }
   }
 
-
-
-
   return (
     <div>
      <h1>Busque una receta</h1>
@@ -76,7 +71,7 @@ async function handleClick() {
         <input type="radio" id="receta" name="busqueda" onChange={() => setBusqueda('receta')}/> Receta
     </label>
     <label>
-        <input type="radio" id="ingrediente" name="busqueda" onChange={() => setBusqueda('ingrediente')}/> Ingrediente
+        <input type="radio" id="tipo" name="busqueda" onChange={() => setBusqueda('tipo')}/> Tipo
     </label>
         </div>
       <input onChange={handleInputChange} value={receta}></input>
@@ -85,11 +80,11 @@ async function handleClick() {
       </button>
        <div id="resultados">
                 {resultados.map((recipe, index) => (
-                    <li key={index}> 
+                      <li key={index}> 
                         <RecipeReviewCard title = {recipe.title}
                           summary = {recipe.summary}
                           image = {recipe.image}
-                          ingredients = {recipe.missedIngredients}
+                          ingredients =  {recipe.extendedIngredients}
                           instructions = {recipe.analyzedInstructions[0].steps}
                           cuisines = {recipe.cuisines}/>                 
                     </li>        
