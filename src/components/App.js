@@ -1,18 +1,21 @@
 import { useEffect, useState } from "react";
 import { buildUrlReceta, buildUrlIngrediente, buildUrlRandomRecepie, buildUrlTipo, getIngredients, getSteps, prueba} from "./util/StringUtil" 
 import RecipeReviewCard from './Recipies/RecipeReviewCard'
+import { display } from "@mui/system";
 
 function App() {
   const [receta, setReceta] = useState('');
   const [busqueda, setBusqueda] = useState('');
   const [resultados, setResultados] = useState([])
+  const [recetaDia, setRecetaDia] = useState([])
+  
 
   useEffect( () => { 
     async function fetchData() {
         try {
           var url = buildUrlRandomRecepie();
           const recepies = await getRecepies(url)
-          setResultados(recepies.recipes)
+          setRecetaDia(recepies.recipes)
     console.log(url)
         } catch (err) {
             console.log(err);
@@ -26,6 +29,7 @@ function App() {
 }
 
 async function handleClick() {
+  console.log("entra a clic");
   const search = receta;
 
   if(search) {
@@ -60,25 +64,30 @@ async function handleClick() {
   }
 
   return (
-    <div>
-     <h1>Busque una receta</h1>
-     <br></br> 
-      <br></br>
+    <div id='divPadre'>
+      <div id='divHeader'>
+        <h1>Recetario</h1>
+      </div>
       {/* <Radio/> */}
-      <div>
-             <legend>Elige un tipo de busqueda</legend>
-    <label>
-        <input type="radio" id="receta" name="busqueda" onChange={() => setBusqueda('receta')}/> Receta
-    </label>
-    <label>
-        <input type="radio" id="tipo" name="busqueda" onChange={() => setBusqueda('tipo')}/> Tipo
-    </label>
-        </div>
-      <input onChange={handleInputChange} value={receta}></input>
-      <button onClick={handleClick}>
-        Buscar
-      </button>
-       <div id="resultados">
+      <div id='divContenedorBuscador'>
+          <legend>Elige un tipo de busqueda</legend>
+          <label>
+              <input type="radio" id="receta" name="busqueda" onChange={() => setBusqueda('receta')}/> Receta
+          </label>
+          <label>
+              <input type="radio" id="tipo" name="busqueda" onChange={() => setBusqueda('tipo')}/> Tipo
+          </label>
+          <div id='divBuscar'>
+            <input onChange={handleInputChange} value={receta}></input>
+            <button onClick={handleClick}>
+              Buscar
+            </button>
+          </div>
+      </div>
+       
+
+      {resultados.length >0 ? 
+            <div id="resultados">  
                 {resultados.map((recipe, index) => (
                       <li key={index}> 
                         <RecipeReviewCard title = {recipe.title}
@@ -87,9 +96,24 @@ async function handleClick() {
                           ingredients =  {recipe.extendedIngredients}
                           instructions = {recipe.analyzedInstructions[0].steps}
                           cuisines = {recipe.cuisines}/>                 
-                    </li>        
-                ))}
-      </div>
+                    </li>    
+                ))}   
+            </div>
+       :
+          <div id="recetaDelDia">
+            <h2>Receta del Dia</h2>
+                    {recetaDia.map((recipe, index) => (
+                          <li key={index}> 
+                            <RecipeReviewCard title = {recipe.title}
+                              summary = {recipe.summary}
+                              image = {recipe.image}
+                              ingredients =  {recipe.extendedIngredients}
+                              instructions = {recipe.analyzedInstructions[0].steps}
+                              cuisines = {recipe.cuisines}/>                 
+                        </li>        
+                    ))}
+          </div>
+       }  
     </div>
   );
 }
