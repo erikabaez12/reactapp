@@ -75,7 +75,7 @@ async function handleClick() {
               <input type="radio" id="receta" name="busqueda" onChange={() => setBusqueda('receta')}/> Receta
           </label>
           <label>
-              <input type="radio" id="tipo" name="busqueda" onChange={() => setBusqueda('tipo')}/> Tipo
+              <input type="radio" id="tipo" name="busqueda" onChange={() => setBusqueda('tipo')}/> Tipo de comida
           </label>
           <div id='divBuscar'>
             <input onChange={handleInputChange} value={receta}></input>

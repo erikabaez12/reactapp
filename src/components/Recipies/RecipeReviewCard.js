@@ -47,7 +47,7 @@ export default function RecipeReviewCard(props) {
           </CardContent>
           <CardMedia
             component="img"
-            height="120"
+            height="100%"
             image={props.image}
           />
           <CardActions disableSpacing>
