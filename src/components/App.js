@@ -3,8 +3,6 @@ import { buildUrlReceta, buildUrlIngrediente, buildUrlRandomRecepie, buildUrlTip
 import RecipeReviewCard from './Recipies/RecipeReviewCard'
 import { display } from "@mui/system";
 import RecipePagination from "../components/Recipies/RecipePagination"
-import Pagination from '@mui/material/Pagination';
-import Stack from '@mui/material/Stack';
 
 function App() {
   const [receta, setReceta] = useState('');
@@ -12,7 +10,6 @@ function App() {
   const [resultados, setResultados] = useState([])
   const [recetaDia, setRecetaDia] = useState([])
   const [page, setPage] = useState(1);
-  const [totalPaginas, setTotalPaginas] = useState(8);
 
   useEffect( () => { 
     async function fetchData() {
@@ -20,7 +17,7 @@ function App() {
           var url = buildUrlRandomRecepie();
           const recepies = await getRecepies(url)
           setRecetaDia(recepies.recipes)
-          console.log(url)
+          
         } catch (err) {
             console.log(err);
         }
@@ -34,6 +31,8 @@ function App() {
 
 async function handleClick() {
   console.log("entra a clic");
+  setResultados(resultados)
+  
   const search = receta;
 
   if(search) {
@@ -50,7 +49,6 @@ async function handleClick() {
     console.log(url);
     if (busqueda=='receta'){
       setResultados(recepies.results)
-      setTotalPaginas(recepies.total_paginas)
     }else if (busqueda=='tipo'){
       setResultados(recepies.recipes)
     }
@@ -89,22 +87,12 @@ async function handleClick() {
             </button>
           </div>
       </div>
-       
+      
 
     {resultados.length > 0 ? 
-        <div id="resultados">  
-          {resultados.map((recipe, index) => (
-            <li key={index}> 
-              <RecipeReviewCard title = {recipe.title}
-                summary = {recipe.summary}
-                image = {recipe.image}
-                ingredients =  {recipe.extendedIngredients}
-                instructions = {recipe.analyzedInstructions[0].steps}
-                cuisines = {recipe.cuisines} />
-            </li>
-          ))}
-          <RecipePagination setPage = {setPage} pageNumber = {resultados.length}/>
-        </div>
+        <div id="resultados">
+            <RecipePagination pageNumber = {resultados.length} lista = {resultados}/>
+        </div>      
       :
         <div id="recetaDelDia">
           <h2>Receta del Día</h2>
