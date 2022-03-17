@@ -31,7 +31,7 @@ function App() {
 
 async function handleClick() {
   console.log("entra a clic");
-  setResultados(resultados)
+  setResultados([])
   
   const search = receta;
 
